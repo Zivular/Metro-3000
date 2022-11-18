@@ -13,7 +13,7 @@ class Player(startingArea: Area):
 
   private var currentLocation = startingArea        // gatherer: changes in relation to the previous location
   private var quitCommandGiven = false              // one-way flag
-  private val possessions = Map[String, Item]()     // container of all the items that the player has
+  private val backPack = Map[String, Item]()     // container of all the items that the player has
 
   /** Determines if the player has indicated a desire to quit the game. */
   def hasQuit = this.quitCommandGiven
@@ -97,6 +97,13 @@ class Player(startingArea: Area):
       "You are empty-handed."
     else
       "You are carrying:\n" + this.possessions.keys.mkString("\n")
+
+
+  def craftItem(itemName: String) = {
+  }
+
+  def useItem(itemName: String) = {
+  }
 
 end Player
 

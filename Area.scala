@@ -13,6 +13,7 @@ class Area(var name: String, var description: String):
 
   private val neighbors = Map[String, Area]()
   private val contents = Map[String, Item]()
+  private val obstacles = Map[String, Obstacle]()
 
   /** Returns the area that can be reached from this area by moving in the given direction. The result
     * is returned in an `Option`; `None` is returned if there is no exit in the given direction. */

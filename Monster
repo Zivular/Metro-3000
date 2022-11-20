@@ -1,0 +1,15 @@
+
+package o1.adventure
+import scala.collection.mutable.Map
+import scala.util.Random
+
+class Monster(kind: String, baseHealth: Int, baseAttackPower: Int, accuracy: Int, player: Player):
+
+  private var health = baseHealth
+
+  def currentHealth = this.health
+
+  def attack(attackPower: Double): Unit =
+    def missed: Boolean = Random.nextInt(101) > this.accuracy
+    if !missed then
+      player.loseHealth(attackPower)

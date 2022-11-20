@@ -1,5 +1,6 @@
 package o1.adventure
 
-class Obstacle {
+class Obstacle(val description: String, val itemNeededtoPass: String):
 
-}
+  def isAbleToPass(usedItem: String): Boolean =
+    usedItem == itemNeededtoPass

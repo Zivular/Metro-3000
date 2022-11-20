@@ -11,22 +11,24 @@ package o1.adventure
 class Adventure:
 
   /** the name of the game */
-  val title = "A Forest Adventure"
+  val title = "Metro 3000"
 
-  private val middle      = Area("Forest", "You are somewhere in the forest. There are a lot of trees here.\nBirds are singing.")
-  private val northForest = Area("Forest", "You are somewhere in the forest. A tangle of bushes blocks further passage north.\nBirds are singing.")
-  private val southForest = Area("Forest", "The forest just goes on and on.\nYou see here: remote")
-  private val clearing    = Area("Forest Clearing", "You are at a small clearing in the middle of forest.\nNearly invisible, twisted paths lead in many directions.\nYou see here: battery")
-  private val tangle      = Area("Tangle of Bushes", "You are in a dense tangle of bushes. It's hard to see exactly where you're going.")
-  private val home        = Area("Home", "Home sweet home! Now the only thing you need is a working remote control.")
-  private val destination = home
+  private val itakeskus = Area("Station 1", "You are in Itäkeskus, it's dangerous in here.\nI need to to go west to get out of here")
+  private val kalasatama = Area("Station 2", "You arrive at Kalasatama, there are a lot of dogs in here. Some of them seem angry")
+  private val rautatientori = Area("Station 3", "You arrive at Rautatientori. There's a lot of people with guns, you need to be carefull not to be seen by them")
+  private val kamppi = Area("Station 4", "You arrive at Kamppi, there are some hobos near. They look friendly")
+  private val ruoholahti = Area("Station 5", "You arrive at Ruoholahti, there seems to be a lot of water at the exit. You need to make a raft to continue")
+  private val lauttasaari = Area("Station 6", "You arrive at Lauttasaari, you hear music upstairs.")
+  private val keilaniemi = Area("Station 7", "It's pitch black and you arrive at keilaniemi, it's eerie in here and you hear a loud yelling from the darkness infront of you")
+  private val otaniemi = Area("Station 8", "You see a bright light, you fall on the floor.")
+  private val destination = otaniemi
 
-  middle     .setNeighbors(Vector("north" -> northForest, "east" -> tangle, "south" -> southForest, "west" -> clearing   ))
-  northForest.setNeighbors(Vector(                        "east" -> tangle, "south" -> middle,      "west" -> clearing   ))
-  southForest.setNeighbors(Vector("north" -> middle,      "east" -> tangle, "south" -> southForest, "west" -> clearing   ))
-  clearing   .setNeighbors(Vector("north" -> northForest, "east" -> middle, "south" -> southForest, "west" -> northForest))
-  tangle     .setNeighbors(Vector("north" -> northForest, "east" -> home,   "south" -> southForest, "west" -> northForest))
-  home       .setNeighbors(Vector(                                                                  "west" -> tangle     ))
+  itakeskus.setNeighbors(Vector("west" -> kalasatama))
+  kalasatama.setNeighbors(Vector("west" -> rautatientori))
+  rautatientori.setNeighbors(Vector("west" -> kamppi))
+  kamppi.setNeighbors(Vector("west" -> ruoholahti))
+  lauttasaari.setNeighbors(Vector("west" -> keilaniemi))
+  keilaniemi.setNeighbors(Vector("west" -> otaniemi))
 
   // TODO: Uncomment the two lines below. Improve the code so that it places the items in clearing and southForest, respectively.
 
@@ -35,31 +37,27 @@ class Adventure:
 
 
   /** The character that the player controls in the game. */
-  val player = Player(middle)
-
-  /** The number of turns that have passed since the start of the game. */
-  var turnCount = 0
-  /** The maximum number of turns that this adventure game allows before time runs out. */
-  val timeLimit = 40
+  val player = Player(itakeskus)
 
 
   /** Determines if the adventure is complete, that is, if the player has won. */
-  def isComplete = (this.player.location == this.destination && this.player.has("battery") && this.player.has("remote"))
+  def isComplete = (this.player.location == this.destination)
 
   /** Determines whether the player has won, lost, or quit, thereby ending the game. */
-  def isOver = this.isComplete || this.player.hasQuit || this.turnCount == this.timeLimit
+  def isOver = this.isComplete || this.player.hasQuit || this.player.isDead
 
   /** Returns a message that is to be displayed to the player at the beginning of the game. */
-  def welcomeMessage = "You are lost in the woods. Find your way back home.\n\nBetter hurry, 'cause Scalatut elämät is on real soon now. And you can't miss Scalkkarit, right?"
+  def welcomeMessage = s"The year is 3000. There has been a nuclear war on the surface of earth and people live in Metro tunnels.\nYou are located in Itäkeskus, Helsinki, Finland and you need to go to Otaniemi, Espoo to meet your scientist friends."
+
 
 
   /** Returns a message that is to be displayed to the player at the end of the game. The message
     * will be different depending on whether or not the player has completed their quest. */
   def goodbyeMessage =
     if this.isComplete then
-      "Home at last... and phew, just in time! Well done!"
+      "\nzzzzzz\nzzzzzz\nzzzzzz\nWake up Mr. Freeman. Wake up and smell the ashes"
     else if this.turnCount == this.timeLimit then
-      "Oh no! Time's up. Starved of entertainment, you collapse and weep like a child.\nGame over!"
+      "You died.\nGame over!"
     else  // game over due to player quitting
       "Quitter!"
 

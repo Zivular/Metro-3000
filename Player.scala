@@ -11,6 +11,7 @@ import scala.collection.mutable.Map
   * @param startingArea  the player’s initial location */
 class Player(startingArea: Area):
 
+  private var playerHealth = 100.0
   private var currentLocation = startingArea        // gatherer: changes in relation to the previous location
   private var quitCommandGiven = false              // one-way flag
   private val backPack = Map[String, Item]()     // container of all the items that the player has
@@ -55,7 +56,7 @@ class Player(startingArea: Area):
   def get(itemName: String) =
     val received = this.location.removeItem(itemName)
     for newItem <- received do
-      this.possessions.put(newItem.name, newItem)
+      this.backPack.put(newItem.name, newItem)
     if received.isDefined then
       "You pick up the " + itemName + "."
     else
@@ -63,7 +64,7 @@ class Player(startingArea: Area):
 
 
   /** Determines whether the player is carrying an item of the given name. */
-  def has(itemName: String) = this.possessions.contains(itemName)
+  def has(itemName: String) = this.backPack.contains(itemName)
 
 
   /** Tries to drop an item of the given name. This is successful if such an item is
@@ -71,7 +72,7 @@ class Player(startingArea: Area):
     * player’s inventory and placed in the area. Returns a description of the result
     * of the attempt: "You drop the ITEM." or "You don't have that!". */
   def drop(itemName: String) =
-    val removed = this.possessions.remove(itemName)
+    val removed = this.backPack.remove(itemName)
     for oldItem <- removed do
       this.location.addItem(oldItem)
     if removed.isDefined then "You drop the " + itemName + "." else "You don't have that!"
@@ -85,7 +86,7 @@ class Player(startingArea: Area):
   def examine(itemName: String) =
     def lookText(item: Item) = "You look closely at the " + item.name + ".\n" + item.description
     val failText = "If you want to examine something, you need to pick it up first."
-    this.possessions.get(itemName).map(lookText).getOrElse(failText)
+    this.backPack.get(itemName).map(lookText).getOrElse(failText)
 
 
   /** Causes the player to list what they are carrying. Returns a listing of the player’s
@@ -93,10 +94,10 @@ class Player(startingArea: Area):
     * value has the form "You are carrying:\nITEMS ON SEPARATE LINES" or "You are empty-handed."
     * The items are listed in an arbitrary order. */
   def inventory =
-    if this.possessions.isEmpty then
+    if this.backPack.isEmpty then
       "You are empty-handed."
     else
-      "You are carrying:\n" + this.possessions.keys.mkString("\n")
+      "You are carrying:\n" + this.backPack.keys.mkString("\n")
 
 
   def craftItem(itemName: String) = {
@@ -105,5 +106,10 @@ class Player(startingArea: Area):
   def useItem(itemName: String) = {
   }
 
-end Player
+  def loseHealth(damageTaken: Double): Unit =
+    this.playerHealth -= damageTaken
 
+  def isDead: Boolean =
+    this.playerHealth <= 0
+
+end Player

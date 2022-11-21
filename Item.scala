@@ -9,21 +9,9 @@ package o1.adventure
   *
   * @param name         the item’s name
   * @param description  the item’s description */
-class Item(val name: String, val description: String):
+class Item(val name: String, val description: String, val damage: Int):
 
   /** Returns a short textual representation of the item (its name, that is). */
-  override def toString = this.name
-
-
-  object Knife:
-
-  end Knife
-
-  object WoodenPlank:
-
-  end WoodenPlank
-
-
+  override def toString = s"${this.name}: $description"
 
 end Item
-

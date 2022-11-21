@@ -2,6 +2,7 @@ package o1.adventure
 
 import scala.collection.mutable.Map
 
+
 /** A `Player` object represents a player character controlled by the real-life user
   * of the program.
   *
@@ -10,6 +11,11 @@ import scala.collection.mutable.Map
   *
   * @param startingArea  the player’s initial location */
 class Player(startingArea: Area):
+
+    /** Craftable items and their crafting recipes in the game */
+  private val craftingRecipes = Map[String, Vector[String]]("raft" -> Vector("wood", "nails"), "knife" -> Vector("steel"), "rope" -> Vector("thread"))
+  private val craftableItems = Map[String, Item]("raft" -> Item("raft", "Looks flimsy, but it floats.", 0), "knife" -> Item("knife", "You can use it to cut things", 25),
+                                                   "rope" -> Item("rope", "Applicalbe in many situations, for example in climbing", 0))
 
   private var playerHealth = 100.0
   private var currentLocation = startingArea        // gatherer: changes in relation to the previous location
@@ -99,14 +105,23 @@ class Player(startingArea: Area):
     else
       "You are carrying:\n" + this.backPack.keys.mkString("\n")
 
-
-  def craftItem(itemName: String) = {
-  }
+ /** If itemName is defined as a craftable item, and player has sufficient items for crafting the item, this method adds this crafted itemName to backPack.
+   * It also removes the items used in crafting, from the players backPack */
+  def craftItem(itemName: String): String =
+    if this.craftingRecipes.contains(itemName) then
+      if this.craftingRecipes(itemName).forall(this.backPack.contains(_)) then
+        this.backPack += (itemName -> this.craftableItems(itemName))
+        this.craftingRecipes(itemName).foreach(this.backPack.remove(_))
+        s"You successfully crafted $itemName!"
+      else
+        s"You lack the necessary craftingitems for $itemName!"
+    else
+      s"You have no idea how to craft $itemName!"
 
   def useItem(itemName: String) = {
   }
 
-  def loseHealth(damageTaken: Double): Unit =
+  def takeDamage(damageTaken: Int): Unit =
     this.playerHealth -= damageTaken
 
   def isDead: Boolean =

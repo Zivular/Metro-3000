@@ -15,15 +15,22 @@ class Player(startingArea: Area):
 
     /** Craftable items and their crafting recipes in the game */
   private val craftingRecipes = Map[String, Vector[String]]("raft" -> Vector("wood", "nails"), "knife" -> Vector("steel"), "rope" -> Vector("thread"))
-  private val craftableItems = Map[String, Item]("raft" -> Item("raft", "Looks flimsy, but it floats.", 0), "knife" -> Item("knife", "You can use it to cut things", 25),
-                                                   "rope" -> Item("rope", "Applicalbe in many situations, for example in climbing", 0))
+  private val craftableItems = Map[String, Item]("raft" -> Item("raft", "Looks flimsy, but it floats.", 0),
+                                                   "rope" -> Item("rope", "Applicable in many situations, for example in climbing", 0))
   private val accuracy = 66
   private var attackPower = 10
   private var playerHealth = 100
   private var currentLocation = startingArea        // gatherer: changes in relation to the previous location
   private var quitCommandGiven = false              // one-way flag
   private val backPack = Map[String, Item]()     // container of all the items that the player has
+  private val syödytVihreaKuulat = 0
 
+  def switchWeapon(weaponName: String): String =
+    if this.backPack.contains(weaponName) then
+      this.attackPower = this.backPack(weaponName).damage
+      s"You switched your weapon to $weaponName! Your attack power is now ${this.attackPower}!"
+    else
+      s"You don't have that weapon!"
 
 
   def currenHealth = this.playerHealth
@@ -46,11 +53,18 @@ class Player(startingArea: Area):
     if destination.isDefined then "You go " + direction + "." else "You can't go " + direction + "."
 
 
-  /** Causes the player to rest for a short while (this has no substantial effect in game terms).
+  /** Causes the player to heal himself by eating some food.
     * Returns a description of what happened. */
-  def rest() =
-    "You rest for a while. Better get a move on, though."
-
+  def eat(): String =
+    if this.backPack.contains("vihreä kuula") then
+      this.playerHealth += this.backPack("vihreä kuula").damage
+      if this.playerHealth < 100 then
+        if this.playerHealth > 100 then this.playerHealth = 100
+        s"You ate one vihreä kuula. You have never tasted anything this good before! Your health is now ${this.playerHealth}"
+      else
+        s"Hyi saatana!🤮 You cannot eat any more vihrea kuula now"
+    else
+      s"Unfortunately you have no virheä kuula :("
 
   /** Signals that the player wants to quit the game. Returns a description of what happened
     * within the game as a result (which is the empty string, in this case). */
@@ -139,7 +153,22 @@ class Player(startingArea: Area):
       s"You miss!"
   }
 
-  def useItem(itemName: String) = {
+  def useItem(itemName: String): String = {
+    if this.backPack.contains(itemName) then
+
+      if itemName == "raft" && this.location.name == "keilaniemi" then
+        this.location.removeObstacle("water")
+        s"You can now pass the water with the raft"
+
+      else if itemName == "rope" && this.location.name == "lauttasaari" then
+        this.location.removeObstacle("elevator shaft")
+        s"You can now climb the elevator shaft to the second floor"
+
+      else
+        s"You have no use for $itemName here"
+
+    else
+      s"You don't have $itemName in your back pack"
   }
 
   def takeDamage(damageTaken: Int): Unit =

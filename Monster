@@ -6,14 +6,13 @@ class Monster(val name: String, val baseHealth: Int, val baseAttackPower: Int, v
 
   private var monsterHealth = baseHealth
 
-  def currentHealth = this.health
-
+  def currentHealth = this.monsterHealth
 
   def attack: Int =
     if Random.nextInt(101) > this.accuracy then 0 else baseAttackPower
 
   def takeDamage(damageTaken: Int): Unit =
-    this.health -= damageTaken
+    this.monsterHealth -= damageTaken
 
 
 end Monster

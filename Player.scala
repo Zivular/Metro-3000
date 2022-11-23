@@ -1,6 +1,7 @@
 package o1.adventure
 
 import scala.collection.mutable.Map
+import scala.util.Random
 
 
 /** A `Player` object represents a player character controlled by the real-life user
@@ -16,11 +17,18 @@ class Player(startingArea: Area):
   private val craftingRecipes = Map[String, Vector[String]]("raft" -> Vector("wood", "nails"), "knife" -> Vector("steel"), "rope" -> Vector("thread"))
   private val craftableItems = Map[String, Item]("raft" -> Item("raft", "Looks flimsy, but it floats.", 0), "knife" -> Item("knife", "You can use it to cut things", 25),
                                                    "rope" -> Item("rope", "Applicalbe in many situations, for example in climbing", 0))
-
-  private var playerHealth = 100.0
+  private val accuracy = 66
+  private var attackPower = 10
+  private var playerHealth = 100
   private var currentLocation = startingArea        // gatherer: changes in relation to the previous location
   private var quitCommandGiven = false              // one-way flag
   private val backPack = Map[String, Item]()     // container of all the items that the player has
+
+
+
+  def currenHealth = this.playerHealth
+
+  def currentAttackPower = this.attackPower
 
   /** Determines if the player has indicated a desire to quit the game. */
   def hasQuit = this.quitCommandGiven
@@ -117,6 +125,19 @@ class Player(startingArea: Area):
         s"You lack the necessary craftingitems for $itemName!"
     else
       s"You have no idea how to craft $itemName!"
+
+  def attack(): String = {
+    if Random.nextInt(101) <= this.accuracy then
+      this.location.returnMonster(0).takeDamage(this.attackPower)
+
+      if monster.currentHealth <= 0 then
+        area.killMonster()
+        s"You killed the ${monster.name}!"
+      else s"You strike the monster! It looses $playerDamage health"
+
+    else
+      s"You miss!"
+  }
 
   def useItem(itemName: String) = {
   }

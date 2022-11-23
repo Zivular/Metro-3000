@@ -128,12 +128,12 @@ class Player(startingArea: Area):
 
   def attack(): String = {
     if Random.nextInt(101) <= this.accuracy then
-      this.location.returnMonster(0).takeDamage(this.attackPower)
+      this.location.returnMonster.head.takeDamage(this.attackPower)
 
-      if monster.currentHealth <= 0 then
-        area.killMonster()
-        s"You killed the ${monster.name}!"
-      else s"You strike the monster! It looses $playerDamage health"
+      if this.location.returnMonster.head.currentHealth <= 0 then
+        this.location.killMonster()
+        s"You killed the ${this.location.returnMonster.head.name}!"
+      else s"You strike the monster! It looses $attackPower health"
 
     else
       s"You miss!"

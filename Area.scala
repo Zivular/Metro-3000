@@ -14,6 +14,8 @@ class Area(var name: String, var description: String):
   private val neighbors = Map[String, Area]()
   private val contents = Map[String, Item]()
   private val obstacles = Map[String, Obstacle]()
+  private val monster = Vector[Monster]()
+  private val characters = Map[String, Character]()
 
   /** Returns the area that can be reached from this area by moving in the given direction. The result
     * is returned in an `Option`; `None` is returned if there is no exit in the given direction. */
@@ -52,8 +54,25 @@ class Area(var name: String, var description: String):
   def addItem(item: Item): Unit =
     this.contents.put(item.name, item)
 
+  def addCharacter(character: Character): Unit = {
+    this.characters.put(character.name, character)
+  }
+
+  def addMonster(monster: Monster): Unit = {
+    this.monster += monster
+  }
+
+  def killMonster(): Unit = {
+    this.monster = Vector[Monster]()
+  }
+
+  def returnMonster = {
+    monster
+  }
+
   /** Determines if the area contains an item of the given name. */
   def contains(itemName: String) = this.contents.contains(itemName)
+
 
 
   /** Removes the item of the given name from the area, assuming an item with that name

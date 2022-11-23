@@ -2,6 +2,8 @@ package o1.adventure
 
 import scala.collection.mutable.Map
 
+import scala.collection.mutable.Buffer
+
 /** The class `Area` represents locations in a text adventure game world. A game world
   * consists of areas. In general, an “area” can be pretty much anything: a room, a building,
   * an acre of forest, or something completely different. What different areas have in
@@ -14,7 +16,7 @@ class Area(var name: String, var description: String):
   private val neighbors = Map[String, Area]()
   private val contents = Map[String, Item]()
   private val obstacles = Map[String, Obstacle]()
-  private val monster = Vector[Monster]()
+  private var monster = Buffer[Monster]()
   private val characters = Map[String, Character]()
 
   /** Returns the area that can be reached from this area by moving in the given direction. The result
@@ -63,7 +65,7 @@ class Area(var name: String, var description: String):
   }
 
   def killMonster(): Unit = {
-    this.monster = Vector[Monster]()
+    this.monster = Buffer[Monster]()
   }
 
   def returnMonster = {
@@ -82,4 +84,3 @@ class Area(var name: String, var description: String):
     this.contents.remove(itemName)
 
 end Area
-

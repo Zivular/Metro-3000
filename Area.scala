@@ -72,6 +72,12 @@ class Area(var name: String, var description: String):
     monster
   }
 
+  def addObstacle(obstacle: Obstacle): Unit =
+    this.obstacles.put(obstacle.name, obstacle)
+
+  def removeObstacle(obstacle: String): Unit =
+    this.obstacles.remove(obstacle)
+
   /** Determines if the area contains an item of the given name. */
   def contains(itemName: String) = this.contents.contains(itemName)
 

@@ -31,11 +31,16 @@ class Adventure:
   kamppi.setNeighbors(Vector("west" -> ruoholahti))
   lauttasaari.setNeighbors(Vector("west" -> keilaniemi))
   keilaniemi.setNeighbors(Vector("west" -> otaniemi))
+  ruoholahti.setNeighbors(Vector("west" -> lauttasaari))
+
+  def areaName =
+    this.player.location
 
   /** The character that the player controls in the game. */
   val player = Player(itakeskus)
   this.keilaniemi.addMonster(Monster("Konealfa", 500, 33, 66))
-
+  this.ruoholahti.addObstacle(Obstacle("water", "Deep and full of radioactive sharks", "raft"))
+  this.lauttasaari.addObstacle(Obstacle("elevator shaft", "A black empty elevator shaft", "rope"))
 
   /** Determines if the adventure is complete, that is, if the player has won. */
   def isComplete = (this.player.location == this.destination)
@@ -76,8 +81,12 @@ class Adventure:
      area.killMonster()
    else
       val monsterDamage = monster.attack
-      if monsterDamage != 0 then println(s"The monster strikes you! You lose $monsterDamage health") else println(s"The monster misses!")
-      player.takeDamage(monsterDamage)
+      if monsterDamage != 0 then
+        println(s"The ${monster.name} strikes you! You lose $monsterDamage health")
+        player.takeDamage(monsterDamage)
+      else println(s"You dodge the attack of ${monster.name} and you land a counter attack!")
+        this.player.attack()
+
   }
 
 end Adventure

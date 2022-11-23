@@ -64,7 +64,7 @@ class Adventure:
     * case, no turns elapse. */
   def playTurn(command: String) =
     if player.location.returnMonster.nonEmpty then {
-      fight(this.player.location.returnMonster(0), this.player.location)
+      fight(this.player.location.returnMonster.head, this.player.location)
     }
     val action = Action(command)
     val outcomeReport = action.execute(this.player)
@@ -75,10 +75,9 @@ class Adventure:
      println(s"You killed the ${monster.name}!")
      area.killMonster()
    else
-      val monsterDamage = monster.attack(monster.baseAttackPower)
-      if damageTaken != 0 then println(s"The monster strikes you! You lose $monsterDamage health") else println(s"The monster misses!")
+      val monsterDamage = monster.attack
+      if monsterDamage != 0 then println(s"The monster strikes you! You lose $monsterDamage health") else println(s"The monster misses!")
       player.takeDamage(monsterDamage)
   }
 
 end Adventure
-

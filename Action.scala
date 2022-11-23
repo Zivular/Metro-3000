@@ -19,7 +19,7 @@ class Action(input: String):
       this.verb match
       case "go"        => Some(actor.go(this.modifiers))
 
-      case "rest"      => Some(actor.rest())
+      case "eat"      => Some(actor.eat())
 
       case "xyzzy"     => Some("The grue tastes yummy.")
 
@@ -36,13 +36,11 @@ class Action(input: String):
       case other       => None
     else this.verb match
 
-      case "attack" => Some(actor.attack)
+      case "eat" => Some(actor.eat())
 
-      case "defence"  => Some("Joku")
+      case "attack" => Some(actor.attack())
 
-      case "counter" => Some("choose attack")
-
-      case "weapon" => Some("jgej")
+      case "switch" => Some(actor.switchWeapon(this.modifiers))
 
       case "quit" => Some(actor.quit())
 

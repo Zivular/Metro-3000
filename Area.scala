@@ -44,8 +44,12 @@ class Area(var name: String, var description: String):
     * DIRECTIONS SEPARATED BY SPACES". The items and directions are listed in an arbitrary order. */
   def fullDescription =
     val contentsList = if this.contents.isEmpty then "" else "\nYou see here: " + this.contents.values.mkString(" ")
-    val exitList = "\n\nExits available: " + this.neighbors.keys.mkString(" ")
-    this.description + contentsList + exitList
+    if this.monster.nonEmpty then
+      val actionlist = s"\nYou got into fight with ${this.monster.head.name}\n\nFigth commands:\nattack: Attacks the enemy with chosen weapon\neat: Eat vihreä kuula to regain health\nswitch [weapon name]: Switches weapon\nquit: Quit the game\n"
+      this.description + actionlist
+    else
+      val exitList = "\n\nExits available: " + this.neighbors.keys.mkString(" ")
+      this.description + contentsList + exitList
 
 
   /** Returns a single-line description of the area for debugging purposes. */

@@ -15,6 +15,7 @@ class Action(input: String):
     * of the action (such as “You go west.”). The description is returned in an `Option`
     * wrapper; if the command was not recognized, `None` is returned. */
   def execute(actor: Player) =
+
     if actor.location.returnMonster.isEmpty then
       this.verb match
       case "go"        => Some(actor.go(this.modifiers))
@@ -33,6 +34,10 @@ class Action(input: String):
 
       case "inventory" => Some(actor.inventory)
 
+      case "craft" => Some(actor.craftItem(this.modifiers))
+
+      case "crafting" => Some(actor.showCraftableItems)
+
       case other       => None
     else this.verb match
 
@@ -50,4 +55,3 @@ class Action(input: String):
   override def toString = s"$verb (modifiers: $modifiers)"
 
 end Action
-

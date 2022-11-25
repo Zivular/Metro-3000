@@ -150,8 +150,9 @@ class Player(startingArea: Area):
       this.location.returnMonster.head.takeDamage(this.attackPower)
 
       if this.location.returnMonster.head.currentHealth <= 0 then
-        this.location.killMonster()
-        s"You killed the ${this.location.returnMonster.head.name}!"
+        val monsterName = this.location.returnMonster.head.name
+        this.location.killMonster(this.location.returnMonster.head)
+        s"You killed the ${monsterName}!"
       else s"You strike the monster! It looses $attackPower health"
 
     else

@@ -15,7 +15,7 @@ import scala.util.Random
 class Player(startingArea: Area):
 
     /** Craftable items and their crafting recipes in the game */
-  private val craftingRecipes = Map[String, Vector[String]]("raft" -> Vector("wood", "nails"), "knife" -> Vector("steel"), "rope" -> Vector("thread"))
+  private val craftingRecipes = Map[String, Vector[String]]("raft" -> Vector("wood", "nails"), "rope" -> Vector("thread"))
   private val craftableItems = Map[String, Item]("raft" -> Item("raft", "Looks flimsy, but it floats.", 0),
                                                    "rope" -> Item("rope", "Applicable in many situations, for example in climbing", 0))
   private val kuulaHealingPower = 50
@@ -60,11 +60,13 @@ class Player(startingArea: Area):
 
   /** Causes the player to heal himself by eating some food.
     * Returns a description of what happened. */
-  def eat(): String =
+  def eat(kuula: String): String =
     if this.backPack.contains("vihreä kuula") || this.backPack.contains("keltainen kuula") || this.backPack.contains("punainen kuula") || this.backPack.contains("oranssi kuula") || this.backPack.contains("violetti kuula") then
-      this.playerHealth += kuulaHealingPower
       if this.playerHealth < 100 then
-        if this.playerHealth > 100 then this.playerHealth = 100
+        this.playerHealth += kuulaHealingPower
+        this.backPack.remove(kuula)
+        if this.playerHealth > 100 then
+          this.playerHealth = 100
         s"You ate one kuula. You have never tasted anything this good before! Your health is now ${this.playerHealth}"
       else
         s"Hyi saatana!🤮 You cannot eat any more kuula now"
@@ -110,6 +112,30 @@ class Player(startingArea: Area):
       this.location.addItem(oldItem)
     if removed.isDefined then "You drop the " + itemName + "." else "You don't have that!"
 
+  def trade(character: Character, item: Item): String = {
+    if this.backPack.contains("vihreä kuula") then {
+      this.backPack.put(item.name, item)
+      character.currentPossessions.remove(item.name)
+      s"You traded a vihreä kuula for ${item.name}"
+    } else if character.currentPossessions.contains("keltainen kuula") then {
+      this.backPack.put(item.name, item)
+      character.currentPossessions.remove(item.name)
+      s"You traded a keltainen kuula for ${item.name}"
+    } else if character.currentPossessions.contains("punainen kuula") then {
+      this.backPack.put(item.name, item)
+      character.currentPossessions.remove(item.name)
+      s"You traded a punainen kuula for ${item.name}"
+    } else if character.currentPossessions.contains("oranssi kuula") then {
+      this.backPack.put(item.name, item)
+      character.currentPossessions.remove(item.name)
+      s"You traded a oranssi kuula for ${item.name}"
+    } else if character.currentPossessions.contains("violetti kuula") then {
+      this.backPack.put(item.name, item)
+      character.currentPossessions.remove(item.name)
+      s"You traded a violetti kuula for ${item.name}"
+    }
+    else "You don't have any kuulas"
+  }
 
   /** Causes the player to examine the item of the given name. This is successful if such
     * an item is currently in the player’s possession. Returns a description of the result,
@@ -117,7 +143,7 @@ class Player(startingArea: Area):
     * has the form: "You look closely at the ITEM.\nDESCRIPTION" or "If you want
     * to examine something, you need to pick it up first." */
   def examine(itemName: String) =
-    def lookText(item: Item) = "You look closely at the " + item.name + ".\n" + item.description
+    def lookText(item: Item) = "You look closely at the " + item.name + ".\n" + item.description + "\n" + "Damage: " + item.damage
     val failText = "If you want to examine something, you need to pick it up first."
     this.backPack.get(itemName).map(lookText).getOrElse(failText)
 
@@ -141,23 +167,20 @@ class Player(startingArea: Area):
         this.craftingRecipes(itemName).foreach(this.backPack.remove(_))
         s"You successfully crafted $itemName!"
       else
-        s"You lack the necessary craftingitems for $itemName!"
+        s"You lack the necessary crafting items for $itemName!"
     else
       s"You have no idea how to craft $itemName!"
 
   def attack(): String = {
     if Random.nextInt(101) <= this.accuracy then
       this.location.returnMonster.head.takeDamage(this.attackPower)
-
-      if this.location.returnMonster.head.currentHealth <= 0 then
-        val monsterName = this.location.returnMonster.head.name
-        this.location.killMonster(this.location.returnMonster.head)
-        s"You killed the ${monsterName}!"
-      else s"You strike the monster! It looses $attackPower health"
-
+      s"You strike the monster! It looses $attackPower health"
     else
       s"You miss!"
   }
+
+  def showCraftableItems: String =
+    s"Items you can craft, if you have sufficient materials:\n\n${this.craftableItems.keys.mkString(", ")}"
 
   def useItem(itemName: String): String = {
     if this.backPack.contains(itemName) then

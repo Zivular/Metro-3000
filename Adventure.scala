@@ -25,17 +25,26 @@ class Adventure:
   private val otaniemi = Area("Otaniemi", "You see a bright light, you fall on the floor.")
   private val abandonedMetroTrain = Area("Abandoned metro train", "This old train has been out of use for long now.")
   private val cafeteria = Area("Cafeteria", "Nice looking cafeteria")
+  private val storage = Area("Storage", "Dark and quite small")
+  private val oldBusTerminal = Area("Old bus terminal", "Some sort of robot attacks you!")
+  private val k1Floor = Area("K1 Floor", "Second floor of the metro station, there is frienldy looking trader nearby.")
   private val destination = otaniemi
 
   itakeskus.setNeighbors(Vector("west" -> kalasatama))
   kalasatama.setNeighbors(Vector("west" -> rautatientori,"east" -> itakeskus, "south" -> abandonedMetroTrain))
   rautatientori.setNeighbors(Vector("west" -> kamppi,"east" -> kalasatama, "south" -> cafeteria))
-  kamppi.setNeighbors(Vector("west" -> ruoholahti, "east" -> rautatientori))
-  lauttasaari.setNeighbors(Vector("west" -> keilaniemi, "east" -> kamppi))
+  kamppi.setNeighbors(Vector("west" -> ruoholahti, "east" -> rautatientori, "south" -> oldBusTerminal))
+  lauttasaari.setNeighbors(Vector("west" -> keilaniemi, "east" -> kamppi, "down" -> k1Floor))
   keilaniemi.setNeighbors(Vector("west" -> otaniemi, "east" -> lauttasaari))
   ruoholahti.setNeighbors(Vector("west" -> lauttasaari, "east" -> keilaniemi))
   abandonedMetroTrain.setNeighbors(Vector("north" -> kalasatama))
-  cafeteria.setNeighbors(Vector("north" -> rautatientori))
+  cafeteria.setNeighbors(Vector("north" -> rautatientori, "south" -> storage))
+  storage.setNeighbors(Vector("north" -> cafeteria))
+  oldBusTerminal.setNeighbors(Vector("north" -> kamppi))
+  k1Floor.setNeighbors(Vector("down" -> lauttasaari))
+
+
+
 
   def areaName =
     this.player.location
@@ -43,15 +52,28 @@ class Adventure:
   /** The character that the player controls in the game. */
   val player = Player(itakeskus)
 
-  /** Obstacles and monster to be created to the game */
-  this.keilaniemi.addMonster(Monster("Konealfa", 500, 33, 66))
+  /** Obstacles to be created to the game */
   this.ruoholahti.addObstacle(Obstacle("water", "Deep and full of radioactive sharks", "raft"))
   this.lauttasaari.addObstacle(Obstacle("elevator shaft", "A black empty elevator shaft", "rope"))
+
+  /** Mosnters to be spawned to the game */
+  this.keilaniemi.addMonster(Monster("Konealfa", 500, 33, 66))
   this.kalasatama.addMonster(Monster("radioactive dog", 30, 20, 60))
+  this.rautatientori.addMonster(Monster("Bandit", 75, 25, 60))
+  this.oldBusTerminal.addMonster(Monster("Robot", 125, 20, 80))
+  this.lauttasaari.addMonster(Monster("radioactive crab", 50, 15, 90))
+
+  /** Characters to be added to the game */
 
   /** Items the player can find from the areas */
-  this.kalasatama.addItem(Item("knife", "Surprisingly it is still quite sharp, maybe you can use it to defend yourself", 30))
-  this.rautatientori.addItem(Item("vihreä kuula", "Delicious looking green ball of perfection", 50))
+  this.abandonedMetroTrain.addItem(Item("knife", "Surprisingly it is still quite sharp, maybe you can use it to defend yourself", 30))
+  this.rautatientori.addItem(Item("vihreä kuula", "Delicious looking green ball of perfection", 0))
+  this.cafeteria.addItem(Item("keltainen kuula", "Delicious looking yellow ball of perfection", 0))
+  this.storage.addItem(Item("nails", "Might be useful for crafting", 0))
+  this.oldBusTerminal.addItem(Item("wood", "You can build stuff with it!", 0))
+  this.oldBusTerminal.addItem(Item("punainen kuula", "Delicious looking red ball of perfection", 0))
+  this.ruoholahti.addItem(Item("violetti kuula", "Delicious looking violet ball of perfection", 0))
+  this.lauttasaari.addItem(Item("thread", "Usable in crafting", 0))
 
 
   /** Determines if the adventure is complete, that is, if the player has won. */
@@ -82,14 +104,15 @@ class Adventure:
   def playTurn(command: String) =
     if player.location.returnMonster.nonEmpty then {
       fight(this.player.location.returnMonster.head, this.player.location)
+      println(s"\nYour current health: ${this.player.currenHealth}")
+      println(s"Your current attack power ${this.player.currentAttackPower}\n")
     }
     val action = Action(command)
     val outcomeReport = action.execute(this.player)
     outcomeReport.getOrElse(s"Unknown command: \"$command\".")
 
+
   def fight(monster: Monster, area: Area) = {
-   println(s"Your current health: ${this.player.currenHealth}\n")
-   println(s"Your current attack power ${this.player.currentAttackPower}\n")
    if monster.currentHealth <= 0 then
      println(s"You killed the ${monster.name}!")
      area.killMonster(monster)
@@ -101,7 +124,8 @@ class Adventure:
         player.takeDamage(monsterDamage)
       else println(s"You dodge the attack of ${monster.name} and you land a counter attack!")
         this.player.attack()
-
+        if monster.currentHealth <= 0 then
+          this.player.location.fullDescription
   }
 
 end Adventure

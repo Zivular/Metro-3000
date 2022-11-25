@@ -43,9 +43,9 @@ class Area(var name: String, var description: String):
     * value has the form "DESCRIPTION\nYou see here: ITEMS SEPARATED BY SPACES\n\nExits available:
     * DIRECTIONS SEPARATED BY SPACES". The items and directions are listed in an arbitrary order. */
   def fullDescription =
-    val contentsList = if this.contents.isEmpty then "" else "\nYou see here: " + this.contents.values.mkString(" ")
+    val contentsList = if this.contents.isEmpty then "" else "\nYou see here: " + this.contents.keys.mkString(", ")
     if this.monster.nonEmpty then
-      val actionlist = s"\nYou got into fight with ${this.monster.head.name}\n\nFigth commands:\nattack: Attacks the enemy with chosen weapon\neat: Eat vihreä kuula to regain health\nswitch [weapon name]: Switches weapon\nquit: Quit the game\n"
+      val actionlist = s"\nYou got into fight with ${this.monster.head.name}\n\nFigth commands:\nattack: Attacks the enemy with chosen weapon\neat [kuula name]: Eat kuula to regain health\nswitch [weapon name]: Switches weapon\ninventory: See your inventory\nquit: Quit the game\n"
       this.description + actionlist
     else
       val exitList = "\n\nExits available: " + this.neighbors.keys.mkString(" ")
@@ -68,11 +68,11 @@ class Area(var name: String, var description: String):
     this.monster += monster
   }
 
-  def killMonster(): Unit = {
-    this.monster = Buffer[Monster]()
+  def killMonster(monster: Monster): Unit = {
+    this.monster -= monster
   }
 
-  def returnMonster = {
+  def returnMonster: Buffer[Monster] = {
     monster
   }
 
@@ -81,6 +81,9 @@ class Area(var name: String, var description: String):
 
   def removeObstacle(obstacle: String): Unit =
     this.obstacles.remove(obstacle)
+
+  def returnObstacle: Map[String, Obstacle] =
+    this.obstacles
 
   /** Determines if the area contains an item of the given name. */
   def contains(itemName: String) = this.contents.contains(itemName)

@@ -26,7 +26,7 @@ class Adventure:
   private val abandonedMetroTrain = Area("Abandoned metro train", "This old train has been out of use for long now.")
   private val cafeteria = Area("Cafeteria", "Nice looking cafeteria")
   private val storage = Area("Storage", "Dark and quite small")
-  private val oldBusTerminal = Area("Old bus terminal", "Some sort of robot attacks you!")
+  private val oldBusTerminal = Area("Old bus terminal", "It is silent and dark in here!")
   private val k1Floor = Area("K1 Floor", "Second floor of the metro station, there is frienldy looking trader nearby.")
   private val destination = otaniemi
 
@@ -34,7 +34,7 @@ class Adventure:
   kalasatama.setNeighbors(Vector("west" -> rautatientori,"east" -> itakeskus, "south" -> abandonedMetroTrain))
   rautatientori.setNeighbors(Vector("west" -> kamppi,"east" -> kalasatama, "south" -> cafeteria))
   kamppi.setNeighbors(Vector("west" -> ruoholahti, "east" -> rautatientori, "south" -> oldBusTerminal))
-  lauttasaari.setNeighbors(Vector("west" -> keilaniemi, "east" -> kamppi, "down" -> k1Floor))
+  lauttasaari.setNeighbors(Vector("west" -> keilaniemi, "east" -> kamppi, "up" -> k1Floor))
   keilaniemi.setNeighbors(Vector("west" -> otaniemi, "east" -> lauttasaari))
   ruoholahti.setNeighbors(Vector("west" -> lauttasaari, "east" -> keilaniemi))
   abandonedMetroTrain.setNeighbors(Vector("north" -> kalasatama))
@@ -102,30 +102,23 @@ class Adventure:
     * report of what happened, or an error message if the command was unknown. In the latter
     * case, no turns elapse. */
   def playTurn(command: String) =
-    if player.location.returnMonster.nonEmpty then {
-      fight(this.player.location.returnMonster.head, this.player.location)
-      println(s"\nYour current health: ${this.player.currenHealth}")
-      println(s"Your current attack power ${this.player.currentAttackPower}\n")
-    }
     val action = Action(command)
     val outcomeReport = action.execute(this.player)
     outcomeReport.getOrElse(s"Unknown command: \"$command\".")
 
 
   def fight(monster: Monster, area: Area) = {
-   if monster.currentHealth <= 0 then
-     println(s"You killed the ${monster.name}!")
-     area.killMonster(monster)
-     this.player.location.fullDescription
-   else
-      val monsterDamage = monster.attack
-      if monsterDamage != 0 then
-        println(s"The ${monster.name} strikes you! You lose $monsterDamage health")
-        player.takeDamage(monsterDamage)
-      else println(s"You dodge the attack of ${monster.name} and you land a counter attack!")
-        this.player.attack()
-        if monster.currentHealth <= 0 then
-          this.player.location.fullDescription
+    var monsterDamage = monster.attack
+    var monsterName = monster.name
+    if monsterDamage == 0 then
+      player.counter
+      println(s"You dodge the attack of ${monsterName}. You land a counter attack and deal ${player.currentAttackPower} damage!")
+      if this.player.location.returnMonster.isEmpty then println(s"You killed the ${monsterName}!")
+    else
+      player.takeDamage(monsterDamage)
+      println(s"The ${area.returnMonster.head.name} strikes you! You lose $monsterDamage health")
+    println(s"\nYour current health is: ${player.currenHealth}")
+    println(s"Your current attack power: ${player.currentAttackPower}")
   }
 
 end Adventure

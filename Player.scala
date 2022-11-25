@@ -35,7 +35,7 @@ class Player(startingArea: Area):
       s"You don't have that weapon!"
 
 
-  def currenHealth = this.playerHealth
+  def currenHealth = if this.playerHealth >= 0 then this.playerHealth else 0
 
   def currentAttackPower = this.attackPower
 
@@ -171,10 +171,14 @@ class Player(startingArea: Area):
     else
       s"You have no idea how to craft $itemName!"
 
-  def attack(): String = {
-    if Random.nextInt(101) <= this.accuracy then
+  def attack(certainHit: Boolean): String = {
+    if Random.nextInt(101) <= this.accuracy || certainHit then
       this.location.returnMonster.head.takeDamage(this.attackPower)
-      s"You strike the monster! It looses $attackPower health"
+      if this.location.returnMonster.head.currentHealth <= 0 then
+        val monsterName = this.location.returnMonster.head.name
+        this.location.killMonster(this.location.returnMonster.head)
+        s"You killed the ${monsterName}!"
+      else s"You strike the monster! It looses $attackPower health"
     else
       s"You miss!"
   }
@@ -185,7 +189,7 @@ class Player(startingArea: Area):
   def useItem(itemName: String): String = {
     if this.backPack.contains(itemName) then
 
-      if itemName == "raft" && this.location.name == "keilaniemi" then
+      if itemName == "raft" && this.location.name == "Ruoholahti" then
         this.location.removeObstacle("water")
         s"You can now pass the water with the raft"
 
@@ -200,8 +204,11 @@ class Player(startingArea: Area):
       s"You don't have $itemName in your back pack"
   }
 
-  def takeDamage(damageTaken: Int): Unit =
+  def takeDamage(damageTaken: Int) =
     this.playerHealth -= damageTaken
+
+  def counter =
+    this.attack(true)
 
   def isDead: Boolean =
     this.playerHealth <= 0

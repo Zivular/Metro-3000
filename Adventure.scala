@@ -16,11 +16,11 @@ class Adventure:
   val title = "Metro 3000"
 
   private val itakeskus = Area("Itkäkeskus", "You are in Itäkeskus, it's dangerous in here.\nI need to to go west to get out of here")
-  private val kalasatama = Area("Kalasatama", "You arrive at Kalasatama, there are a lot of dogs in here. Some of them seem angry")
-  private val rautatientori = Area("Rautatientori", "You arrive at Rautatientori. There's a lot of people with guns, you need to be carefull not to be seen by them")
-  private val kamppi = Area("Kamppi", "You arrive at Kamppi, there are some hobos near. They look friendly")
-  private val ruoholahti = Area("Ruoholahti", "You arrive at Ruoholahti, there seems to be a lot of water at the exit. You need to make a raft to continue")
-  private val lauttasaari = Area("Lauttasaari", "You arrive at Lauttasaari, you hear music upstairs.")
+  private val kalasatama = Area("Kalasatama", "You are in Kalasatama, there are a lot of dogs in here. Some of them seem angry")
+  private val rautatientori = Area("Rautatientori", "You are in Rautatientori. There's a lot of people with guns, you need to be carefull not to be seen by them")
+  private val kamppi = Area("Kamppi", "You are in Kamppi, there are some hobos near. They look friendly")
+  private val ruoholahti = Area("Ruoholahti", "You are in Ruoholahti, there seems to be a lot of water at the exit. You need to make a raft to continue")
+  private val lauttasaari = Area("Lauttasaari", "You are in Lauttasaari, you hear music upstairs.")
   private val keilaniemi = Area("Keilaniemi", "It's pitch black and you arrive at keilaniemi, it's eerie in here and you hear a loud yelling from the darkness infront of you.\nA furious and intoxicated konealfa attacks you!")
   private val otaniemi = Area("Otaniemi", "You see a bright light, you fall on the floor.")
   private val abandonedMetroTrain = Area("Abandoned metro train", "This old train has been out of use for long now.")
@@ -28,12 +28,14 @@ class Adventure:
   private val destination = otaniemi
 
   itakeskus.setNeighbors(Vector("west" -> kalasatama))
-  kalasatama.setNeighbors(Vector("west" -> rautatientori, "east" -> abandonedMetroTrain))
-  rautatientori.setNeighbors(Vector("west" -> kamppi, "east" -> cafeteria))
-  kamppi.setNeighbors(Vector("west" -> ruoholahti))
-  lauttasaari.setNeighbors(Vector("west" -> keilaniemi))
-  keilaniemi.setNeighbors(Vector("west" -> otaniemi))
-  ruoholahti.setNeighbors(Vector("west" -> lauttasaari))
+  kalasatama.setNeighbors(Vector("west" -> rautatientori,"east" -> itakeskus, "south" -> abandonedMetroTrain))
+  rautatientori.setNeighbors(Vector("west" -> kamppi,"east" -> kalasatama, "south" -> cafeteria))
+  kamppi.setNeighbors(Vector("west" -> ruoholahti, "east" -> rautatientori))
+  lauttasaari.setNeighbors(Vector("west" -> keilaniemi, "east" -> kamppi))
+  keilaniemi.setNeighbors(Vector("west" -> otaniemi, "east" -> lauttasaari))
+  ruoholahti.setNeighbors(Vector("west" -> lauttasaari, "east" -> keilaniemi))
+  abandonedMetroTrain.setNeighbors(Vector("north" -> kalasatama))
+  cafeteria.setNeighbors(Vector("north" -> rautatientori))
 
   def areaName =
     this.player.location
@@ -50,6 +52,7 @@ class Adventure:
   /** Items the player can find from the areas */
   this.kalasatama.addItem(Item("knife", "Surprisingly it is still quite sharp, maybe you can use it to defend yourself", 30))
   this.rautatientori.addItem(Item("vihreä kuula", "Delicious looking green ball of perfection", 50))
+
 
   /** Determines if the adventure is complete, that is, if the player has won. */
   def isComplete = (this.player.location == this.destination)
@@ -85,9 +88,11 @@ class Adventure:
     outcomeReport.getOrElse(s"Unknown command: \"$command\".")
 
   def fight(monster: Monster, area: Area) = {
+   println(s"Your current health: ${this.player.currenHealth}\n")
+   println(s"Your current attack power ${this.player.currentAttackPower}\n")
    if monster.currentHealth <= 0 then
      println(s"You killed the ${monster.name}!")
-     area.killMonster()
+     area.killMonster(monster)
      this.player.location.fullDescription
    else
       val monsterDamage = monster.attack

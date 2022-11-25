@@ -20,11 +20,13 @@ class Action(input: String):
       this.verb match
       case "go"        => Some(actor.go(this.modifiers))
 
-      case "eat"      => Some(actor.eat())
+      case "eat"      => Some(actor.eat(this.modifiers))
 
       case "xyzzy"     => Some("The grue tastes yummy.")
 
       case "quit"      => Some(actor.quit())
+
+      case "use" => Some(actor.useItem(this.modifiers))
 
       case "get"       => Some(actor.get(this.modifiers))
 
@@ -38,14 +40,20 @@ class Action(input: String):
 
       case "crafting" => Some(actor.showCraftableItems)
 
+      case "attack" => Some("You have nothing to attack!")
+
+      case "switch" => Some(actor.switchWeapon(this.modifiers))
+
       case other       => None
     else this.verb match
 
-      case "eat" => Some(actor.eat())
+      case "eat" => Some(actor.eat(this.modifiers))
 
-      case "attack" => Some(actor.attack())
+      case "attack" => Some(actor.attack(false))
 
       case "switch" => Some(actor.switchWeapon(this.modifiers))
+      
+      case "inventory" => Some(actor.inventory)
 
       case "quit" => Some(actor.quit())
 

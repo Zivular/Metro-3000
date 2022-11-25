@@ -1,6 +1,7 @@
 package o1.adventure
 
 import scala.collection.mutable.Map
+import scala.collection.mutable.Buffer
 import scala.util.Random
 
 
@@ -17,6 +18,7 @@ class Player(startingArea: Area):
   private val craftingRecipes = Map[String, Vector[String]]("raft" -> Vector("wood", "nails"), "knife" -> Vector("steel"), "rope" -> Vector("thread"))
   private val craftableItems = Map[String, Item]("raft" -> Item("raft", "Looks flimsy, but it floats.", 0),
                                                    "rope" -> Item("rope", "Applicable in many situations, for example in climbing", 0))
+  private val kuulaHealingPower = 50
   private val accuracy = 66
   private var attackPower = 10
   private var playerHealth = 100
@@ -48,23 +50,26 @@ class Player(startingArea: Area):
     * is an exit from the player’s current location towards the direction name. Returns
     * a description of the result: "You go DIRECTION." or "You can't go DIRECTION." */
   def go(direction: String) =
-    val destination = this.location.neighbor(direction)
-    this.currentLocation = destination.getOrElse(this.currentLocation)
-    if destination.isDefined then "You go " + direction + "." else "You can't go " + direction + "."
+    if this.location.returnObstacle.isEmpty || direction != "west" then
+      val destination = this.location.neighbor(direction)
+      this.currentLocation = destination.getOrElse(this.currentLocation)
+      if destination.isDefined then "You go " + direction + "." else "You can't go " + direction + "."
+    else
+      s"You cannot go west, there is ${this.location.returnObstacle.head._1} blocking your way!"
 
 
   /** Causes the player to heal himself by eating some food.
     * Returns a description of what happened. */
   def eat(): String =
-    if this.backPack.contains("vihreä kuula") then
-      this.playerHealth += this.backPack("vihreä kuula").damage
+    if this.backPack.contains("vihreä kuula") || this.backPack.contains("keltainen kuula") || this.backPack.contains("punainen kuula") || this.backPack.contains("oranssi kuula") || this.backPack.contains("violetti kuula") then
+      this.playerHealth += kuulaHealingPower
       if this.playerHealth < 100 then
         if this.playerHealth > 100 then this.playerHealth = 100
-        s"You ate one vihreä kuula. You have never tasted anything this good before! Your health is now ${this.playerHealth}"
+        s"You ate one kuula. You have never tasted anything this good before! Your health is now ${this.playerHealth}"
       else
-        s"Hyi saatana!🤮 You cannot eat any more vihrea kuula now"
+        s"Hyi saatana!🤮 You cannot eat any more kuula now"
     else
-      s"Unfortunately you have no virheä kuula :("
+      s"Unfortunately you have no kuula :("
 
   /** Signals that the player wants to quit the game. Returns a description of what happened
     * within the game as a result (which is the empty string, in this case). */

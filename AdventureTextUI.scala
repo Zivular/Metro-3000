@@ -19,7 +19,8 @@ object AdventureTextUI extends App:
     println(this.game.welcomeMessage)
     while !this.game.isOver do
       this.printAreaInfo()
-      this.playTurn()
+      val command = this.playTurn()
+      if this.player.location.returnMonster.nonEmpty && command != "go west" && command != "go south" && command != "go north" then this.game.fight(player.location.returnMonster.head, this.player.location)
     println("\n" + this.game.goodbyeMessage)
 
 
@@ -39,6 +40,7 @@ object AdventureTextUI extends App:
     val turnReport = this.game.playTurn(command)
     if turnReport.nonEmpty then
       println(turnReport)
+    command
 
 end AdventureTextUI
 

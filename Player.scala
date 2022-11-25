@@ -112,6 +112,7 @@ class Player(startingArea: Area):
       this.location.addItem(oldItem)
     if removed.isDefined then "You drop the " + itemName + "." else "You don't have that!"
 
+  /** This methods takes care of the trading done with NPC characters, You can trade marmelaadi kuulas with the character */
   def trade(character: Character, item: Item): String = {
     if this.backPack.contains("vihreä kuula") then {
       this.backPack.put(item.name, item)

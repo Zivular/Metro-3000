@@ -2,7 +2,7 @@ package o1.adventure
 import scala.collection.mutable.Map
 import scala.util.Random
 
-class Monster(val name: String, val baseHealth: Int, val baseAttackPower: Int, val accuracy: Int, val drop: Item):
+class Monster(val name: String, val baseHealth: Int, val baseAttackPower: Int, val accuracy: Int):
 
   private var monsterHealth = baseHealth
 

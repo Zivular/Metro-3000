@@ -18,7 +18,7 @@ class Adventure:
   private val itakeskus = Area("Itkäkeskus", "You are in Itäkeskus, it's dangerous in here.\nI need to to go west to get out of here")
   private val kalasatama = Area("Kalasatama", "You are in Kalasatama, there are a lot of dogs in here. Some of them seem angry")
   private val rautatientori = Area("Rautatientori", "You are in Rautatientori. There's a lot of people with guns, you need to be carefull not to be seen by them")
-  private val kamppi = Area("Kamppi", "You are in Kamppi, there are some hobos near. They look friendly")
+  private val kamppi = Area("Kamppi", "You are in Kamppi, there are some hobos near. They look friendly.")
   private val ruoholahti = Area("Ruoholahti", "You are in Ruoholahti, there seems to be a lot of water at the exit. You need to make a raft to continue")
   private val lauttasaari = Area("Lauttasaari", "You are in Lauttasaari, you hear music upstairs.")
   private val keilaniemi = Area("Keilaniemi", "It's pitch black and you arrive at keilaniemi, it's eerie in here and you hear a loud yelling from the darkness infront of you.\nA furious and intoxicated konealfa attacks you!")
@@ -52,20 +52,29 @@ class Adventure:
   /** The character that the player controls in the game. */
   val player = Player(itakeskus)
 
+  /** Characters to be created to the game */
+  this.kamppi.addNpc(Npc("Hobo", Item("amphetamine", "Gives you better accuracy", 0), "bag of gold coins"))
+  this.k1Floor.addNpc(Npc("Rave chick", Item("golden katana", "A weapon of epic proportions", 100), "bunch of wires"))
+
   /** Obstacles to be created to the game */
   this.ruoholahti.addObstacle(Obstacle("water", "Deep and full of radioactive sharks", "raft"))
   this.lauttasaari.addObstacle(Obstacle("elevator shaft", "A black empty elevator shaft", "rope"))
 
   /** Mosnters to be spawned to the game */
-  this.keilaniemi.addMonster(Monster("Konealfa", 500, 33, 66, Item("Gambina", "A tasty red beverage", 1)))
-  this.kalasatama.addMonster(Monster("Mutated dog", 30, 20, 60, Item("Bone", "A bone from the rib cage of the mutated dog", 15)))
-  this.rautatientori.addMonster(Monster("Bandit", 75, 25, 60, Item("Bag of gold coins", "Heavy for its size", 0)))
-  this.oldBusTerminal.addMonster(Monster("Robot", 125, 20, 80, Item("Bunch of wires", "Electric!", 0)))
-  this.lauttasaari.addMonster(Monster("Mutated crab", 50, 15, 90, Item("Crab meat", "Smells like the ocean", 0)))
+  this.keilaniemi.addMonster(Monster("Konealfa", 500, 33, 66))
+  this.kalasatama.addMonster(Monster("Mutated dog", 30, 20, 60))
+  this.rautatientori.addMonster(Monster("Bandit", 75, 25, 60))
+  this.oldBusTerminal.addMonster(Monster("Battle Robot", 125, 20, 80))
+  this.lauttasaari.addMonster(Monster("Mutated crab", 50, 15, 90))
 
   /** Characters to be added to the game */
 
   /** Items the player can find from the areas */
+  this.keilaniemi.addItem(Item("gambina", "Tastes very good :)!", 1))
+  this.kalasatama.addItem(Item("bone", "A bone from the rib cage of the mutated god", 15))
+  this.rautatientori.addItem(Item("bag of gold coins", "Heavy for its size", 0))
+  this.oldBusTerminal.addItem(Item("bunch of wires", "Electric!",0))
+  this.lauttasaari.addItem(Item("crab meat","Smells like the ocean",0))
   this.abandonedMetroTrain.addItem(Item("knife", "Surprisingly it is still quite sharp, maybe you can use it to defend yourself", 30))
   this.rautatientori.addItem(Item("vihreä kuula", "Delicious looking green ball of perfection", 0))
   this.cafeteria.addItem(Item("keltainen kuula", "Delicious looking yellow ball of perfection", 0))
@@ -74,6 +83,7 @@ class Adventure:
   this.oldBusTerminal.addItem(Item("punainen kuula", "Delicious looking red ball of perfection", 0))
   this.ruoholahti.addItem(Item("violetti kuula", "Delicious looking violet ball of perfection", 0))
   this.lauttasaari.addItem(Item("thread", "Usable in crafting", 0))
+
 
 
 

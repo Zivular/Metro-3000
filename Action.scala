@@ -44,7 +44,7 @@ class Action(input: String):
 
       case "switch" => Some(actor.switchWeapon(this.modifiers))
 
-      case "trade" => Some(actor.trade(actor.location.returnCharacter.head, actor.backPackItem(this.modifiers)))
+      case "trade" => Some(actor.trade(actor.location.returnNpc.head, actor.backPackItem(this.modifiers)))
 
       case other       => None
     else this.verb match

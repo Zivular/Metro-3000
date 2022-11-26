@@ -19,7 +19,7 @@ class Area(var name: String, var description: String):
   private val contents = Map[String, Item]()
   private val obstacles = Map[String, Obstacle]()
   private var monster = Buffer[Monster]()
-  private val characters = Buffer[Character]()
+  private val characters = Buffer[Npc]()
 
   /** Returns the area that can be reached from this area by moving in the given direction. The result
     * is returned in an `Option`; `None` is returned if there is no exit in the given direction. */
@@ -51,7 +51,7 @@ class Area(var name: String, var description: String):
       val actionlist = s"\nYou got into a fight with ${this.monster.head.name}\n\nFight commands:\nattack: Attacks the enemy with chosen weapon\neat [kuula name]: Eat kuula to regain health\nswitch [weapon name]: Switches weapon\ninventory: See your inventory\nquit: Quit the game\n"
       this.description + actionlist
     else if this.characters.nonEmpty then
-      val tradeList = s"You see a ${this.characters.head.name}, they might have something valuable to trade\n${exitList}"
+      val tradeList = s" You see a ${this.characters.head.name}, they might have something valuable to trade\n${exitList}"
       this.description + tradeList
     else
       this.description + contentsList + exitList
@@ -65,7 +65,7 @@ class Area(var name: String, var description: String):
   def addItem(item: Item): Unit =
     this.contents.put(item.name, item)
 
-  def addCharacter(character: Character): Unit = {
+  def addNpc(character: Npc): Unit = {
     this.characters += character
   }
 
@@ -74,7 +74,6 @@ class Area(var name: String, var description: String):
   }
 
   def killMonster(monster: Monster): Unit = {
-    this.addItem(monster.drop)
     this.monster -= monster
   }
 
@@ -82,7 +81,7 @@ class Area(var name: String, var description: String):
     monster
   }
 
-  def returnCharacter: Buffer[Character] = {
+  def returnNpc: Buffer[Npc] = {
     characters
   }
 

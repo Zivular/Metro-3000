@@ -215,4 +215,23 @@ class Player(startingArea: Area):
   def isDead: Boolean =
     this.playerHealth <= 0
 
+    def help() =
+    s"You have to get from Itäkeskus to Otaniemi. All the major metro stations in the game can be reachded by going west." +
+      s"Sometimes there might be some obstacle, which you need to remove,to get to the next station (west). Obstacles can be removed by " +
+      s"crafting an item and then use that item in the location, where the obstacle is.\n\nIn some areas there is a monster you need to beat in order to move from that area" +
+      s"or get items from that area. This game uses turn based combat in fights.\n\nAll commands player can write in the game, are listed below. It does not contain commands" +
+      s"that can be used in fight, because those are always listed during a fight with a monster.\n\ngo [direction]: Player goes to chosen direction, which are some of the four basic compass directions." +
+      s"\neat [name of food]: Player can eat either crab meat, or 5 different colored marmelade balls to regain health." +
+      s"\nquit: Quits the game and ends the program" +
+      s"\nuse [item name]: Player uses the chosen item" +
+      s"\nget [item name]: Player can get item from area to players backpack, where they can be used." +
+      s"\ndrop [item name]: Player drops the chosen item from backpack to current area" +
+      s"\nexamine [item name]: Player reads the description of the chosen item" +
+      s"\ninventory: Shows all the items player has in backpack." +
+      s"\ncraft [item name]: Crafts an chosen item and adds to backpack" +
+      s"\ncrafting: Shows all the craftable items" +
+      s"\nswitch[item name]: Switches players weapon to chosen weapon" +
+      s"\ntrade[item name]: Trade chosen item to another item of a NPC, that is in the same area as the player"
+
+
 end Player

@@ -2,11 +2,12 @@ package o1.adventure
 import scala.collection.mutable.Map
 import scala.util.Random
 
-class Monster(val name: String, val baseHealth: Int, val baseAttackPower: Int, val accuracy: Int):
+class Monster(val name: String, val baseHealth: Int, val baseAttackPower: Int, val accuracy: Int, val drop: Item):
 
   private var monsterHealth = baseHealth
 
   def currentHealth = this.monsterHealth
+
 
   def attack: Int =
     if Random.nextInt(101) > this.accuracy then 0 else baseAttackPower

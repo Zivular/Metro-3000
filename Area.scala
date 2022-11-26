@@ -3,6 +3,8 @@ package o1.adventure
 import scala.collection.mutable.Map
 
 import scala.collection.mutable.Buffer
+import scala.io.StdIn.*
+
 
 /** The class `Area` represents locations in a text adventure game world. A game world
   * consists of areas. In general, an “area” can be pretty much anything: a room, a building,
@@ -17,13 +19,13 @@ class Area(var name: String, var description: String):
   private val contents = Map[String, Item]()
   private val obstacles = Map[String, Obstacle]()
   private var monster = Buffer[Monster]()
-  private val characters = Map[String, Character]()
+  private val characters = Buffer[Character]()
 
   /** Returns the area that can be reached from this area by moving in the given direction. The result
     * is returned in an `Option`; `None` is returned if there is no exit in the given direction. */
   def neighbor(direction: String) = this.neighbors.get(direction)
 
-  /** Adds an exit from this area to the given area. The neighboring area is reached by moving in
+  /** Adds an exit from this area to the given area. The neighboringf area is reached by moving in
     * the specified direction from this area. */
   def setNeighbor(direction: String, neighbor: Area): Unit =
     this.neighbors += direction -> neighbor
@@ -43,12 +45,15 @@ class Area(var name: String, var description: String):
     * value has the form "DESCRIPTION\nYou see here: ITEMS SEPARATED BY SPACES\n\nExits available:
     * DIRECTIONS SEPARATED BY SPACES". The items and directions are listed in an arbitrary order. */
   def fullDescription =
+    val exitList = "\n\nExits available: " + this.neighbors.keys.mkString(" ")
     val contentsList = if this.contents.isEmpty then "" else "\nYou see here: " + this.contents.keys.mkString(", ")
     if this.monster.nonEmpty then
-      val actionlist = s"\nYou got into fight with ${this.monster.head.name}\n\nFigth commands:\nattack: Attacks the enemy with chosen weapon\neat [kuula name]: Eat kuula to regain health\nswitch [weapon name]: Switches weapon\ninventory: See your inventory\nquit: Quit the game\n"
+      val actionlist = s"\nYou got into a fight with ${this.monster.head.name}\n\nFight commands:\nattack: Attacks the enemy with chosen weapon\neat [kuula name]: Eat kuula to regain health\nswitch [weapon name]: Switches weapon\ninventory: See your inventory\nquit: Quit the game\n"
       this.description + actionlist
+    else if this.characters.nonEmpty then
+      val tradeList = s"You see a ${this.characters.head.name}, they might have something valuable to trade\n${exitList}"
+      this.description + tradeList
     else
-      val exitList = "\n\nExits available: " + this.neighbors.keys.mkString(" ")
       this.description + contentsList + exitList
 
 
@@ -61,7 +66,7 @@ class Area(var name: String, var description: String):
     this.contents.put(item.name, item)
 
   def addCharacter(character: Character): Unit = {
-    this.characters.put(character.name, character)
+    this.characters += character
   }
 
   def addMonster(monster: Monster): Unit = {
@@ -69,11 +74,16 @@ class Area(var name: String, var description: String):
   }
 
   def killMonster(monster: Monster): Unit = {
+    this.addItem(monster.drop)
     this.monster -= monster
   }
 
   def returnMonster: Buffer[Monster] = {
     monster
+  }
+
+  def returnCharacter: Buffer[Character] = {
+    characters
   }
 
   def addObstacle(obstacle: Obstacle): Unit =

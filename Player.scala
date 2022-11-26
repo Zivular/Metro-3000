@@ -19,7 +19,7 @@ class Player(startingArea: Area):
   private val craftableItems = Map[String, Item]("raft" -> Item("raft", "Looks flimsy, but it floats.", 0),
                                                    "rope" -> Item("rope", "Applicable in many situations, for example in climbing", 0))
   private val kuulaHealingPower = 50
-  private val accuracy = 75
+  private var accuracy = 75
   private var attackPower = 10
   private var playerHealth = 100
   private var currentLocation = startingArea        // gatherer: changes in relation to the previous location
@@ -126,11 +126,10 @@ class Player(startingArea: Area):
     if removed.isDefined then "You drop the " + itemName + "." else "You don't have that!"
 
   /** This methods takes care of the trading done with NPC characters */
-  def trade(character: Character, item: Item): String = {
+  def trade(character: Npc, item: Item): String = {
     if character.wantedItem == item.name then {
-      val characterItem = character.currentOwnedItem.head._2
+      val characterItem = character.currentItem
       this.backPack.put(characterItem.name, characterItem)
-      character.currentOwnedItem.remove(characterItem.name)
       character.addItem(item)
       s"You traded a $item for ${characterItem.name}!"
     } else s"You don't have the required item for a trade"
@@ -192,9 +191,13 @@ class Player(startingArea: Area):
         this.location.removeObstacle("water")
         s"You can now pass the water with the raft"
 
-      else if itemName == "rope" && this.location.name == "lauttasaari" then
+      else if itemName == "rope" && this.location.name == "Lauttasaari" then
         this.location.removeObstacle("elevator shaft")
         s"You can now climb the elevator shaft to the second floor"
+
+      else if itemName == "amphetamine" then
+        this.accuracy = 90
+        s"You feel fired up and ready to fight"
 
       else
         s"You have no use for $itemName here"

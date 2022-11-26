@@ -19,13 +19,16 @@ class Player(startingArea: Area):
   private val craftableItems = Map[String, Item]("raft" -> Item("raft", "Looks flimsy, but it floats.", 0),
                                                    "rope" -> Item("rope", "Applicable in many situations, for example in climbing", 0))
   private val kuulaHealingPower = 50
-  private val accuracy = 66
+  private val accuracy = 75
   private var attackPower = 10
   private var playerHealth = 100
   private var currentLocation = startingArea        // gatherer: changes in relation to the previous location
   private var quitCommandGiven = false              // one-way flag
   private val backPack = Map[String, Item]()     // container of all the items that the player has
   private val syödytVihreaKuulat = 0
+
+
+  def backPackItem(itemName: String) = this.backPack(itemName)
 
   def switchWeapon(weaponName: String): String =
     if this.backPack.contains(weaponName) then
@@ -35,7 +38,7 @@ class Player(startingArea: Area):
       s"You don't have that weapon!"
 
 
-  def currenHealth = if this.playerHealth >= 0 then this.playerHealth else 0
+  def currentHealth = if this.playerHealth >= 0 then this.playerHealth else 0
 
   def currentAttackPower = this.attackPower
 
@@ -60,16 +63,26 @@ class Player(startingArea: Area):
 
   /** Causes the player to heal himself by eating some food.
     * Returns a description of what happened. */
-  def eat(kuula: String): String =
-    if this.backPack.contains("vihreä kuula") || this.backPack.contains("keltainen kuula") || this.backPack.contains("punainen kuula") || this.backPack.contains("oranssi kuula") || this.backPack.contains("violetti kuula") then
-      if this.playerHealth < 100 then
+  def eat(food: String): String =
+    if this.backPack.contains(food) && food != "Crab meat" then {
+      if this.playerHealth < 100 then {
         this.playerHealth += kuulaHealingPower
-        this.backPack.remove(kuula)
+        this.backPack.remove(food)
         if this.playerHealth > 100 then
           this.playerHealth = 100
         s"You ate one kuula. You have never tasted anything this good before! Your health is now ${this.playerHealth}"
-      else
-        s"Hyi saatana!🤮 You cannot eat any more kuula now"
+      } else s"Hyi saatana!🤮 You cannot eat any more kuula now"
+    }
+
+    else if this.backPack.contains(food) && food == "Crab meat" then {
+      if this.playerHealth < 100 then {
+        this.playerHealth += 60
+        this.backPack.remove(food)
+        if this.playerHealth > 100 then
+          this.playerHealth = 100
+        s"You are some crab meat, it tasted delicious! Your health is now {${this.playerHealth}"
+      } else s"Smells too fishy! You cannot eat any more crab meat now"
+    }
     else
       s"Unfortunately you have no kuula :("
 
@@ -112,30 +125,15 @@ class Player(startingArea: Area):
       this.location.addItem(oldItem)
     if removed.isDefined then "You drop the " + itemName + "." else "You don't have that!"
 
-  /** This methods takes care of the trading done with NPC characters, You can trade marmelaadi kuulas with the character */
+  /** This methods takes care of the trading done with NPC characters */
   def trade(character: Character, item: Item): String = {
-    if this.backPack.contains("vihreä kuula") then {
-      this.backPack.put(item.name, item)
-      character.currentPossessions.remove(item.name)
-      s"You traded a vihreä kuula for ${item.name}"
-    } else if character.currentPossessions.contains("keltainen kuula") then {
-      this.backPack.put(item.name, item)
-      character.currentPossessions.remove(item.name)
-      s"You traded a keltainen kuula for ${item.name}"
-    } else if character.currentPossessions.contains("punainen kuula") then {
-      this.backPack.put(item.name, item)
-      character.currentPossessions.remove(item.name)
-      s"You traded a punainen kuula for ${item.name}"
-    } else if character.currentPossessions.contains("oranssi kuula") then {
-      this.backPack.put(item.name, item)
-      character.currentPossessions.remove(item.name)
-      s"You traded a oranssi kuula for ${item.name}"
-    } else if character.currentPossessions.contains("violetti kuula") then {
-      this.backPack.put(item.name, item)
-      character.currentPossessions.remove(item.name)
-      s"You traded a violetti kuula for ${item.name}"
-    }
-    else "You don't have any kuulas"
+    if character.wantedItem == item.name then {
+      val characterItem = character.currentOwnedItem.head._2
+      this.backPack.put(characterItem.name, characterItem)
+      character.currentOwnedItem.remove(characterItem.name)
+      character.addItem(item)
+      s"You traded a $item for ${characterItem.name}!"
+    } else s"You don't have the required item for a trade"
   }
 
   /** Causes the player to examine the item of the given name. This is successful if such

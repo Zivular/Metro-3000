@@ -22,8 +22,6 @@ class Action(input: String):
 
       case "eat"      => Some(actor.eat(this.modifiers))
 
-      case "xyzzy"     => Some("The grue tastes yummy.")
-
       case "quit"      => Some(actor.quit())
 
       case "use" => Some(actor.useItem(this.modifiers))
@@ -40,11 +38,11 @@ class Action(input: String):
 
       case "crafting" => Some(actor.showCraftableItems)
 
-      case "attack" => Some("You have nothing to attack!")
-
       case "switch" => Some(actor.switchWeapon(this.modifiers))
 
       case "trade" => Some(actor.trade(actor.location.returnNpc.head, actor.backPackItem(this.modifiers)))
+
+      case "help" => Some(actor.help())
 
       case other       => None
     else this.verb match

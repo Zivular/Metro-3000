@@ -43,4 +43,3 @@ object AdventureTextUI extends App:
     command
 
 end AdventureTextUI
-

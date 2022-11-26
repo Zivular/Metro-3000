@@ -215,7 +215,7 @@ class Player(startingArea: Area):
   def isDead: Boolean =
     this.playerHealth <= 0
 
-    def help() =
+  def help() =
     s"You have to get from Itäkeskus to Otaniemi. All the major metro stations in the game can be reachded by going west." +
       s"Sometimes there might be some obstacle, which you need to remove,to get to the next station (west). Obstacles can be removed by " +
       s"crafting an item and then use that item in the location, where the obstacle is.\n\nIn some areas there is a monster you need to beat in order to move from that area" +

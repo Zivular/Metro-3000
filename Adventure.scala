@@ -34,9 +34,9 @@ class Adventure:
   kalasatama.setNeighbors(Vector("west" -> rautatientori,"east" -> itakeskus, "south" -> abandonedMetroTrain))
   rautatientori.setNeighbors(Vector("west" -> kamppi,"east" -> kalasatama, "south" -> cafeteria))
   kamppi.setNeighbors(Vector("west" -> ruoholahti, "east" -> rautatientori, "south" -> oldBusTerminal))
-  lauttasaari.setNeighbors(Vector("west" -> keilaniemi, "east" -> kamppi, "up" -> k1Floor))
+  ruoholahti.setNeighbors(Vector("west" -> lauttasaari, "east" -> kamppi))
+  lauttasaari.setNeighbors(Vector("west" -> keilaniemi, "east" -> ruoholahti, "up" -> k1Floor))
   keilaniemi.setNeighbors(Vector("west" -> otaniemi, "east" -> lauttasaari))
-  ruoholahti.setNeighbors(Vector("west" -> lauttasaari, "east" -> keilaniemi))
   abandonedMetroTrain.setNeighbors(Vector("north" -> kalasatama))
   cafeteria.setNeighbors(Vector("north" -> rautatientori, "south" -> storage))
   storage.setNeighbors(Vector("north" -> cafeteria))
@@ -57,11 +57,11 @@ class Adventure:
   this.lauttasaari.addObstacle(Obstacle("elevator shaft", "A black empty elevator shaft", "rope"))
 
   /** Mosnters to be spawned to the game */
-  this.keilaniemi.addMonster(Monster("Konealfa", 500, 33, 66))
-  this.kalasatama.addMonster(Monster("radioactive dog", 30, 20, 60))
-  this.rautatientori.addMonster(Monster("Bandit", 75, 25, 60))
-  this.oldBusTerminal.addMonster(Monster("Robot", 125, 20, 80))
-  this.lauttasaari.addMonster(Monster("radioactive crab", 50, 15, 90))
+  this.keilaniemi.addMonster(Monster("Konealfa", 500, 33, 66, Item("Gambina", "A tasty red beverage", 1)))
+  this.kalasatama.addMonster(Monster("Mutated dog", 30, 20, 60, Item("Bone", "A bone from the rib cage of the mutated dog", 15)))
+  this.rautatientori.addMonster(Monster("Bandit", 75, 25, 60, Item("Bag of gold coins", "Heavy for its size", 0)))
+  this.oldBusTerminal.addMonster(Monster("Robot", 125, 20, 80, Item("Bunch of wires", "Electric!", 0)))
+  this.lauttasaari.addMonster(Monster("Mutated crab", 50, 15, 90, Item("Crab meat", "Smells like the ocean", 0)))
 
   /** Characters to be added to the game */
 
@@ -74,6 +74,7 @@ class Adventure:
   this.oldBusTerminal.addItem(Item("punainen kuula", "Delicious looking red ball of perfection", 0))
   this.ruoholahti.addItem(Item("violetti kuula", "Delicious looking violet ball of perfection", 0))
   this.lauttasaari.addItem(Item("thread", "Usable in crafting", 0))
+
 
 
   /** Determines if the adventure is complete, that is, if the player has won. */
@@ -117,7 +118,9 @@ class Adventure:
     else
       player.takeDamage(monsterDamage)
       println(s"The ${area.returnMonster.head.name} strikes you! You lose $monsterDamage health")
-    println(s"\nYour current health is: ${player.currenHealth}")
+    println(s"\nYour current health is: ${player.currentHealth}")
+    if monster.currentHealth > 0 then
+      println(s"${monsterName}s current health is: ${monster.currentHealth}")
     println(s"Your current attack power: ${player.currentAttackPower}")
   }
 
